@@ -9,7 +9,7 @@
 
   <script>
     window.addEventListener('message', function(event) {
-      if (event.origin !== "https://cutt.ly/PwDqcbbF") return;
+      if (event.origin !== "https://cutt.ly/PwDqcbbF") return; // Ganti dengan origin sumber yang diizinkan
 
       var updatedLink = event.data.updatedLink;
 
@@ -21,36 +21,16 @@
       var myFrame = document.getElementById('myFrame');
       
       myFrame.addEventListener('load', function() {
-        var iframeDocument = myFrame.contentDocument || myFrame.contentWindow.document;
+        var iframeWindow = myFrame.contentWindow;
 
-        var iframeContent = `
-          <html>
-          <head>
-            <title>Iframe Content</title>
-          </head>
-          <body>
-           
-            
-            <script>
-              window.addEventListener('DOMContentLoaded', function(event) {
-                var rhBodyElement = document.querySelector('.rhbody');
-                if (rhBodyElement) {
-                  var updatedLink = rhBodyElement.getAttribute('href');
-                  window.parent.postMessage({ updatedLink: updatedLink }, 'https://cutt.ly/PwDqcbbF');
-                }
-              });
-            </script>
-          </body>
-          </html>
-        `;
-        
-        iframeDocument.open();
-        iframeDocument.write(iframeContent);
-        iframeDocument.close();
+        iframeWindow.addEventListener('DOMContentLoaded', function() {
+          // Mendapatkan URL yang sedang dimuat di dalam iframe
+          var updatedLink = iframeWindow.location.href;
+
+          // Kirim pesan ke dokumen utama dengan link yang diperbarui
+          window.parent.postMessage({ updatedLink: updatedLink }, 'https://cutt.ly/PwDqcbbF');
+        });
       });
-
-      // Ganti URL_HALAMAN_IFRAME dengan URL yang ingin dimuat di dalam iframe
-      myFrame.src = 'https://cutt.ly/PwDqcbbF';
     });
   </script>
 </body>
