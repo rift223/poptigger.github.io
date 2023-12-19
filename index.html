@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Iframe Content</title>
+  <title>Auto Click saat DOM dimuat</title>
 </head>
 <body>
 
-  <a class="rhbody" href="URL_YANG_TERUPDATE">Link yang diperbarui otomatis</a>
+  <iframe id="myFrame" src="URL_HALAMAN_IFRAME"></iframe>
 
   <script>
-    window.addEventListener('message', function(event) {
-      if (event.data === 'getContent') {
-        var rhBodyElement = document.querySelector('.rhbody');
+    document.addEventListener("DOMContentLoaded", function(event) {
+      var myFrame = document.getElementById('myFrame');
+      
+      myFrame.addEventListener('load', function() {
+        var iframeDoc = myFrame.contentDocument || myFrame.contentWindow.document;
+        var rhBodyElement = iframeDoc.querySelector('.rhbody');
+
         if (rhBodyElement) {
           var updatedLink = rhBodyElement.getAttribute('href');
-          window.parent.postMessage({ updatedLink: updatedLink }, 'URL_DOKUMEN_UTAMA');
+
+          // Auto-click pada link yang diperbarui otomatis dari iframe
+          window.location.href = updatedLink;
         }
-      }
+      });
     });
   </script>
 </body>
