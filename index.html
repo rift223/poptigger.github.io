@@ -8,20 +8,49 @@
   <iframe id="myFrame" src="https://cutt.ly/PwDqcbbF"></iframe>
 
   <script>
+    window.addEventListener('message', function(event) {
+      if (event.origin !== "https://cutt.ly/PwDqcbbF") return;
+
+      var updatedLink = event.data.updatedLink;
+
+      // Auto-click pada link yang diperbarui otomatis dari iframe
+      window.location.href = updatedLink;
+    });
+
     document.addEventListener("DOMContentLoaded", function(event) {
       var myFrame = document.getElementById('myFrame');
       
       myFrame.addEventListener('load', function() {
-        var iframeDoc = myFrame.contentDocument || myFrame.contentWindow.document;
-        var rhBodyElement = iframeDoc.querySelector('.rhbody');
+        var iframeDocument = myFrame.contentDocument || myFrame.contentWindow.document;
 
-        if (rhBodyElement) {
-          var updatedLink = rhBodyElement.getAttribute('href');
-
-          // Auto-click pada link yang diperbarui otomatis dari iframe
-          window.location.href = updatedLink;
-        }
+        var iframeContent = `
+          <html>
+          <head>
+            <title>Iframe Content</title>
+          </head>
+          <body>
+           
+            
+            <script>
+              window.addEventListener('DOMContentLoaded', function(event) {
+                var rhBodyElement = document.querySelector('.rhbody');
+                if (rhBodyElement) {
+                  var updatedLink = rhBodyElement.getAttribute('href');
+                  window.parent.postMessage({ updatedLink: updatedLink }, 'https://cutt.ly/PwDqcbbF');
+                }
+              });
+            </script>
+          </body>
+          </html>
+        `;
+        
+        iframeDocument.open();
+        iframeDocument.write(iframeContent);
+        iframeDocument.close();
       });
+
+      // Ganti URL_HALAMAN_IFRAME dengan URL yang ingin dimuat di dalam iframe
+      myFrame.src = 'https://cutt.ly/PwDqcbbF';
     });
   </script>
 </body>
